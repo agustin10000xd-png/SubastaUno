@@ -1,0 +1,123 @@
+/* ============================================
+   ANIMATIONS - Subasta Futbolera
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---- Pulso del spotlight detrás de la carta (estado silueta) ---- */
+@keyframes spotlight-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(1.08); }
+}
+
+/* ---- Trazo dorado recorriendo el borde de las cartas leyenda ---- */
+@keyframes gold-shine-move {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ---- Entrada de la carta al cambiar de posición/candidato ---- */
+@keyframes carta-entrada {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.carta-wrapper.entrando .carta {
+  animation: carta-entrada 0.35s ease-out;
+}
+
+/* ---- Flash al momento de comprar/revelar ---- */
+@keyframes flash-reveal {
+  0%   { opacity: 0; }
+  35%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.carta.revelando::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, #ffffff, var(--spot-color, #fff) 55%, transparent 75%);
+  z-index: 5;
+  animation: flash-reveal 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+/* Para leyenda el flash es más largo y dorado (se suma al borde animado normal) */
+.carta[data-tipo="leyenda"].revelando::before {
+  animation-duration: 0.9s;
+}
+
+/* ---- Sacudida sutil de la carta al comprar (impacto) ---- */
+@keyframes carta-impacto {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.04); }
+  60%  { transform: scale(0.99); }
+  100% { transform: scale(1); }
+}
+
+.carta.revelando {
+  animation: carta-impacto 0.5s ease-out;
+}
+
+/* ---- Salida de la carta al saltear ---- */
+@keyframes carta-salida {
+  from { opacity: 1; transform: translateX(0) rotate(0deg); }
+  to   { opacity: 0; transform: translateX(-40px) rotate(-6deg); }
+}
+
+.carta-wrapper.saltando .carta {
+  animation: carta-salida 0.3s ease-in forwards;
+}
+
+/* ---- Dots de candidatos: transición al consumirse ---- */
+@keyframes dot-consumido {
+  0%   { transform: scale(1.3); background: var(--danger); }
+  100% { transform: scale(1); }
+}
+
+.candidato-dot.recien-usado {
+  animation: dot-consumido 0.4s ease-out;
+}
+
+/* ---- Precio "tirando" el número random antes de fijarse (efecto tragamonedas) ---- */
+@keyframes precio-tick {
+  0%   { transform: translateY(6px); opacity: 0.4; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.precio-valor.tick {
+  animation: precio-tick 0.15s ease-out;
+}
+
+/* ---- Slot de plantel al completarse ---- */
+@keyframes slot-fill {
+  0%   { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.plantel-slot.ocupado {
+  animation: slot-fill 0.35s ease-out;
+}
+
+/* ---- Botones: leve resorte al hover ---- */
+.btn-comprar:not(:disabled):hover {
+  animation: none;
+  transform: translateY(-2px);
+}
+
+/* ---- Modal final: aparición ---- */
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.modal-final-content {
+  animation: modal-in 0.3s ease-out;
+}

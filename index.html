@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subasta Futbolera - Arma tu equipo campeón</title>
+
+<!-- CSS modular -->
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/anomations.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">●</span>
+      <span>Subasta</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navegación principal">
+      <button class="sidebar-tab active" type="button" data-tab="inicio" aria-selected="true">Inicio</button>
+      <button class="sidebar-tab" type="button" data-tab="formacion" aria-selected="false">Formación</button>
+      <button class="sidebar-tab" type="button" data-tab="simular" aria-selected="false" id="tab-simular">Simular</button>
+    </nav>
+  </aside>
+
+  <div class="content-shell">
+    <header class="game-header">
+      <div class="header-left">
+        <h1 class="logo">SUBASTA FUTBOLERA</h1>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat">
+          <span class="stat-label">Presupuesto</span>
+          <span class="stat-value" id="presupuesto">1000M</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Saltos</span>
+          <span class="stat-value" id="saltos-restantes">4</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="tab-panel active" id="panel-inicio">
+      <!-- ================= AREA PRINCIPAL DE SUBASTA ================= -->
+      <main class="subasta-container">
+
+        <div class="posicion-actual">
+          <span class="eyebrow">Subastando</span>
+          <h2 id="posicion-nombre">Arquero</h2>
+        </div>
+
+        <!-- La carta: data-tipo se setea dinámicamente vía JS (actual / retirado / leyenda) -->
+        <div class="carta-wrapper">
+          <div class="carta" id="carta" data-tipo="actual" data-revelado="false">
+
+            <!-- Silueta (estado inicial) -->
+            <div class="carta-silueta" id="carta-silueta">
+              <img src="Imagenes/silueta-jugador.png" alt="" class="silueta-img" id="silueta-img">
+              <div class="carta-glow"></div>
+            </div>
+
+            <!-- Info revelada (oculta hasta saltear o comprar) -->
+            <div class="carta-revelada" id="carta-revelada">
+              <img class="jugador-foto" id="jugador-foto" src="" alt="">
+              <div class="jugador-info">
+                <h3 class="jugador-nombre" id="jugador-nombre">-</h3>
+                <div class="jugador-meta" id="jugador-meta">
+                  <img class="jugador-bandera" id="jugador-bandera" src="" alt="">
+                  <span class="jugador-club" id="jugador-club">-</span>
+                </div>
+                <span class="jugador-tipo-badge" id="jugador-tipo-badge">-</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Precio -->
+        <div class="precio-box">
+          <span class="precio-label">Precio base</span>
+          <span class="precio-valor" id="precio-actual">0M</span>
+        </div>
+
+        <!-- Acciones -->
+        <div class="acciones-container">
+          <button class="btn btn-saltear" id="btn-saltear">
+            Saltear <span class="saltos-badge" id="saltos-badge">4</span>
+          </button>
+          <button class="btn btn-comprar" id="btn-comprar">
+            Comprar
+          </button>
+        </div>
+
+        <!-- Contador de candidatos restantes en este puesto (5 jugadores por puesto) -->
+        <div class="candidatos-indicador" id="candidatos-indicador">
+          <span class="candidato-dot activo"></span>
+          <span class="candidato-dot"></span>
+          <span class="candidato-dot"></span>
+          <span class="candidato-dot"></span>
+          <span class="candidato-dot"></span>
+        </div>
+
+      </main>
+
+    </div>
+
+    <div class="tab-panel" id="panel-formacion">
+      <section class="panel-section">
+        <h2 class="panel-title">Formación actual</h2>
+        <div class="formacion-tab-list"></div>
+      </section>
+    </div>
+
+    <div class="tab-panel" id="panel-simular">
+      <section class="panel-section">
+        <h2 class="panel-title">Simulación</h2>
+        <p class="simulacion-estado">Faltan jugadores por completar la formación.</p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL DE SELECCIÓN DE EQUIPO ================= -->
+<div class="modal-overlay" id="modal-seleccion-equipo" hidden>
+  <div class="modal-final-content selector-content">
+    <h2>Elige tu objetivo</h2>
+    <p class="selector-subtitle">Selecciona el modo de competición y el club con el que vas a construir tu plantel.</p>
+    <div class="selector-groups">
+      <div class="selector-section selector-mode-section">
+        <h3>Modo</h3>
+        <div class="selector-modos" id="selector-modos"></div>
+      </div>
+      <div class="selector-section selector-team-section" id="selector-team-section" hidden>
+        <h3>Equipo</h3>
+        <div class="selector-grid" id="selector-grid"></div>
+      </div>
+    </div>
+    <button class="btn btn-comprar selector-btn" id="btn-comenzar-subasta" disabled>Comenzar subasta</button>
+  </div>
+</div>
+
+<!-- ================= MODAL DE FIN DE JUEGO (oculto por defecto) ================= -->
+<div class="modal-overlay" id="modal-final" hidden>
+  <div class="modal-final-content">
+    <h2>¡Plantel completo!</h2>
+    <div class="formacion-final" id="formacion-final"></div>
+    <button class="btn btn-comprar" id="btn-reiniciar">Jugar de nuevo</button>
+  </div>
+</div>
+
+<!-- ================= SCRIPTS (orden importa, sin módulos ES para poder abrir con file://) ================= -->
+
+<!-- Datos: cada archivo define su propia constante (ARQUEROS, LATERAL_DERECHO, etc.) -->
+<script src="js/data/Jugadores/arquero.js"></script>
+<script src="js/data/Jugadores/lateralDerecho.js"></script>
+<script src="js/data/Jugadores/lateralIzquierdo.js"></script>
+<script src="js/data/Jugadores/centralDerecho.js"></script>
+<script src="js/data/Jugadores/centralIzquierdo.js"></script>
+<script src="js/data/Jugadores/mediocampistaIzquierdo.js"></script>
+<script src="js/data/Jugadores/mediocampistaCentro.js"></script>
+<script src="js/data/Jugadores/mediocampistaDerecho.js"></script>
+<script src="js/data/Jugadores/extremoDerecho.js"></script>
+<script src="js/data/Jugadores/extremoIzquierdo.js"></script>
+<script src="js/data/Jugadores/delanteroCentro.js"></script>
+<script src="js/data/Modos/Champions.js"></script>
+<script src="js/data/Modos/Mundial.js"></script>
+<script src="js/data/Modos/Libertadores.js"></script>
+<!-- index.js arma DEMO_PLAYERS juntando todas las constantes de arriba -->
+<script src="js/data/index.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/carta.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+/* ============================================
+   CARTA - silueta, revelado y tiers
+   ============================================ */
+
+.carta-wrapper {
+  position: relative;
+  width: 280px;
+  height: 380px;
+}
+
+/* Spotlight detrás de la carta: cambia de color según data-tipo */
+.carta-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--spot-color, var(--tier-actual)) 0%, transparent 68%);
+  opacity: 0.35;
+  filter: blur(10px);
+  z-index: -1;
+  animation: spotlight-pulse 2.6s ease-in-out infinite;
+}
+
+.carta {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--line-hairline);
+  background: var(--bg-pitch-raised);
+  box-shadow: var(--shadow-deep);
+  transform-style: preserve-3d;
+  --card-gradient: linear-gradient(180deg, rgba(134, 196, 96, 0.9) 0%, rgba(72, 117, 48, 0.85) 40%, rgba(16, 24, 18, 0.98) 100%);
+}
+
+/* ---- Asignación de color por tier vía atributo ---- */
+.carta[data-tipo="actual"]    { --spot-color: var(--tier-actual); }
+.carta[data-tipo="retirado"]  { --spot-color: var(--tier-retirado); }
+.carta[data-tipo="leyenda"]   { --spot-color: var(--tier-leyenda); }
+
+/* ---------- ESTADO: SILUETA ---------- */
+.carta-silueta {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--card-gradient);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Fondo de color según tier, con degrade hacia abajo tipo "presentación de plantel" */
+.carta[data-tipo="actual"] .carta-silueta {
+  background: linear-gradient(180deg, rgba(134, 196, 96, 0.9) 0%, rgba(72, 117, 48, 0.85) 38%, rgba(16, 24, 18, 0.98) 100%);
+}
+.carta[data-tipo="retirado"] .carta-silueta {
+  background: linear-gradient(180deg, rgba(61,139,255,0.35) 0%, rgba(31,92,196,0.9) 38%, rgba(9,15,28,0.98) 100%);
+}
+.carta[data-tipo="leyenda"] .carta-silueta {
+  background: linear-gradient(180deg, rgba(255,206,61,0.38) 0%, rgba(201,154,21,0.9) 38%, rgba(38,28,7,0.98) 100%);
+}
+
+.silueta-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+  transform: translateY(0);
+}
+
+.carta-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.5) 100%);
+  pointer-events: none;
+}
+
+
+/* ---------- ESTADO: REVELADO ---------- */
+.carta-revelada {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.96);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.carta[data-revelado="true"] .carta-silueta {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carta[data-revelado="true"] .carta-revelada {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.jugador-foto {
+  width: 100%;
+  height: 68%;
+  object-fit: cover;
+  object-position: top center;
+  background: var(--bg-pitch);
+}
+
+.jugador-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  position: relative;
+}
+
+/* Fondo de la tarjeta de revelación, bien identificable por tier */
+.carta[data-tipo="actual"] .jugador-info {
+  background: linear-gradient(165deg, var(--tier-actual) -30%, var(--tier-actual-dim) 55%, #07160e 145%);
+}
+.carta[data-tipo="retirado"] .jugador-info {
+  background: linear-gradient(165deg, #2c4e8a 0%, #0f2d5d 50%, #06122b 100%);
+}
+.carta[data-tipo="leyenda"] .jugador-info {
+  background: linear-gradient(165deg, #b88d20 0%, #6b4f08 50%, #2a1e04 100%);
+}
+
+.jugador-nombre {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+}
+
+/* Cajita chica que agrupa bandera + club */
+.jugador-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 6px;
+  background: rgba(5,8,10,0.4);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
+  backdrop-filter: blur(2px);
+}
+
+.jugador-bandera {
+  width: 22px;
+  height: 16px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+
+.jugador-club {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.jugador-tipo-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(5,8,10,0.45);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: var(--text-primary);
+}
+
+/* Borde animado especial para leyenda (trazo dorado recorriendo el marco) */
+.carta[data-tipo="leyenda"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  padding: 2px;
+  background: var(--gold-shine);
+  background-size: 200% auto;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: gold-shine-move 3s linear infinite;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Mini plantel: cartas chicas dentro del grid de "Tu Plantel" */
+.plantel-slot[data-tipo="actual"].ocupado   { border-color: var(--tier-actual-dim); }
+.plantel-slot[data-tipo="retirado"].ocupado { border-color: var(--tier-retirado-dim); }
+.plantel-slot[data-tipo="leyenda"].ocupado  { border-color: var(--tier-leyenda-dim); }
+
+@media (max-width: 560px) {
+  .carta-wrapper { width: 240px; height: 330px; }
+}
